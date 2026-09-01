@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.microservice.ecommerce</groupId>
+	<artifactId>ecommerce</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>eCommerce</name>
+	<description>Aggregator for the eCommerce microservices</description>
+
+	<!--
+	  Aggregator only: each service keeps spring-boot-starter-parent as its own
+	  <parent>, so dependency and plugin resolution is unchanged. This exists so
+	  the four services are imported as one Maven reactor instead of four
+	  separately linked projects.
+	-->
+	<modules>
+		<module>discovery-service</module>
+		<module>api-gateway</module>
+		<module>inventory-service</module>
+		<module>order-service</module>
+	</modules>
+
+</project>

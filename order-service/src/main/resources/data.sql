@@ -1,11 +1,11 @@
-INSERT INTO orders (id, order_status, price) VALUES (1, 'CONFIRMED', 109998.00);
-INSERT INTO orders (id, order_status, price) VALUES (2, 'PENDING', 79999.00);
-INSERT INTO orders (id, order_status, price) VALUES (3, 'CANCELLED', 34999.00);
-
-INSERT INTO order_item (id, product_id, quantity, order_id) VALUES (1, 1, 1, 1);
-INSERT INTO order_item (id, product_id, quantity, order_id) VALUES (2, 5, 2, 1);
-INSERT INTO order_item (id, product_id, quantity, order_id) VALUES (3, 2, 1, 2);
-INSERT INTO order_item (id, product_id, quantity, order_id) VALUES (4, 8, 1, 3);
-
-ALTER SEQUENCE IF EXISTS orders_id_seq RESTART WITH 1000;
-ALTER SEQUENCE IF EXISTS order_item_id_seq RESTART WITH 1000;
+-- INSERT INTO orders (id, order_status, price) VALUES (1, 'CONFIRMED', 109998.00);
+-- INSERT INTO orders (id, order_status, price) VALUES (2, 'PENDING', 79999.00);
+-- INSERT INTO orders (id, order_status, price) VALUES (3, 'CANCELLED', 34999.00);
+--
+-- INSERT INTO order_item (id, product_id, quantity, order_id) VALUES (1, 1, 1, 1);
+-- INSERT INTO order_item (id, product_id, quantity, order_id) VALUES (2, 5, 2, 1);
+-- INSERT INTO order_item (id, product_id, quantity, order_id) VALUES (3, 2, 1, 2);
+-- INSERT INTO order_item (id, product_id, quantity, order_id) VALUES (4, 8, 1, 3);
+--
+-- ALTER SEQUENCE IF EXISTS orders_id_seq RESTART WITH 1000;
+-- ALTER SEQUENCE IF EXISTS order_item_id_seq RESTART WITH 1000;
