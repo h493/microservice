@@ -11,8 +11,8 @@
 	<groupId>com.microservice.ecommerce</groupId>
 	<artifactId>inventory-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>inventory-service</name>
+	<description>Product inventory microservice</description>
 	<url/>
 	<licenses>
 		<license/>

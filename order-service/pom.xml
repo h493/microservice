@@ -11,8 +11,8 @@
 	<groupId>com.microservice.ecommerce</groupId>
 	<artifactId>order-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>order-service</name>
+	<description>Customer order microservice</description>
 	<url/>
 	<licenses>
 		<license/>
