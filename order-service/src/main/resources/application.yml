@@ -1,0 +1,6 @@
+resilience4j:
+  retry:
+    instances:
+      inventoryRetry:
+        max-attempts: 3
+        wait-duration: 5s
