@@ -55,4 +55,10 @@ public class ProductController {
         Double totalPrice = productService.reduceStocks(orderRequestDto);
         return ResponseEntity.ok(totalPrice);
     }
+
+    @PutMapping("increase-stocks")
+    public ResponseEntity<Double> increaseStocks(@RequestBody OrderRequestDto orderRequestDto){
+        Double totalPrice = productService.increaseStocks(orderRequestDto);
+        return ResponseEntity.ok(totalPrice);
+    }
 }

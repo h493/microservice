@@ -40,4 +40,10 @@ public class OrderController {
         OrderRequestDto createdOrder = orderService.createOrder(orderRequestDto);
         return ResponseEntity.ok(createdOrder);
     }
+
+    @PostMapping("/cancel-order")
+    public ResponseEntity<OrderRequestDto> cancelOrder(@RequestBody OrderRequestDto orderRequestDto){
+        OrderRequestDto cancelOrder = orderService.cancelOrder(orderRequestDto);
+        return ResponseEntity.ok(cancelOrder);
+    }
 }

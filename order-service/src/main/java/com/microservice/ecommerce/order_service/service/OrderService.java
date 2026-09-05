@@ -60,6 +60,22 @@ public class OrderService {
         return modelMapper.map(orders, OrderRequestDto.class);
     }
 
+    public OrderRequestDto cancelOrder(OrderRequestDto orderRequestDto) {
+        log.info("Calling the cancelOrder Method");
+        Double totalPrice = inventoryOpenFeignClient.increaseStocks(orderRequestDto);
+
+        Orders orders = modelMapper.map(orderRequestDto, Orders.class);
+
+        for(OrderItem orderItem : orders.getItems()){
+            orderItem.setOrder(orders);
+        }
+        orders.setPrice(totalPrice);
+        orders.setOrderStatus(OrderStatus.CANCELLED);
+
+        orders = orderRepository.save(orders);
+        return modelMapper.map(orders, OrderRequestDto.class);
+    }
+
     public OrderRequestDto createOrderFallback(OrderRequestDto orderRequestDto, Throwable throwable) {
         log.error("Fallback occureed due to : {}", throwable.getMessage());
         return new OrderRequestDto();
