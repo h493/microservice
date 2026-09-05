@@ -1,7 +1,9 @@
 package com.microservice.ecommerce.order_service.service;
 
 import com.microservice.ecommerce.order_service.clients.InventoryOpenFeignClient;
+import com.microservice.ecommerce.order_service.clients.ShippingOpenFeignClient;
 import com.microservice.ecommerce.order_service.dto.OrderRequestDto;
+import com.microservice.ecommerce.order_service.dto.ShippingResponseDto;
 import com.microservice.ecommerce.order_service.entity.OrderItem;
 import com.microservice.ecommerce.order_service.entity.OrderStatus;
 import com.microservice.ecommerce.order_service.entity.Orders;
@@ -25,6 +27,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
     private final InventoryOpenFeignClient inventoryOpenFeignClient;
+    private final ShippingOpenFeignClient shippingOpenFeignClient;
 
     public List<OrderRequestDto> getAllOrders(){
         log.info("Fetching all orders");
@@ -55,8 +58,18 @@ public class OrderService {
         }
         orders.setPrice(totalPrice);
         orders.setOrderStatus(OrderStatus.CONFIRMED);
+        orders.setShippingStatus("PENDING");
 
         orders = orderRepository.save(orders);
+
+        try {
+            ShippingResponseDto shipping = shippingOpenFeignClient.confirmShipping(orders.getId());
+            orders.setShippingStatus(shipping.status());
+            orders = orderRepository.save(orders);
+        } catch (Exception exception) {
+            log.warn("Shipping is still pending for order {}: {}", orders.getId(), exception.getMessage());
+        }
+
         return modelMapper.map(orders, OrderRequestDto.class);
     }
 

@@ -13,5 +13,7 @@ public class OrderRequestDto {
 
     private Double price;
 
+    private String shippingStatus;
+
     private List<OrderRequestItemDto> items;
 }

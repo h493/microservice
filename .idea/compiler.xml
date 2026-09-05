@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
         <module name="discovery-service" />
+        <module name="shipping-service" />
       </profile>
       <profile name="Annotation profile for eCommerce" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -27,6 +28,7 @@
       <module name="discovery-service" options="-parameters" />
       <module name="inventory-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
+      <module name="shipping-service" options="-parameters" />
     </option>
   </component>
 </project>
