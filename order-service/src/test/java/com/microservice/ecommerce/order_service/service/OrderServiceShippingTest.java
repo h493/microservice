@@ -1,7 +1,6 @@
 package com.microservice.ecommerce.order_service.service;
 
 import com.microservice.ecommerce.order_service.clients.InventoryOpenFeignClient;
-import com.microservice.ecommerce.order_service.clients.ShippingOpenFeignClient;
 import com.microservice.ecommerce.order_service.dto.OrderRequestDto;
 import com.microservice.ecommerce.order_service.dto.OrderRequestItemDto;
 import com.microservice.ecommerce.order_service.dto.ShippingResponseDto;
@@ -33,7 +32,7 @@ class OrderServiceShippingTest {
     private InventoryOpenFeignClient inventoryClient;
 
     @Mock
-    private ShippingOpenFeignClient shippingClient;
+    private ShippingCommunicationService shippingCommunicationService;
 
     private OrderService orderService;
 
@@ -41,7 +40,12 @@ class OrderServiceShippingTest {
     void setUp() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        orderService = new OrderService(orderRepository, modelMapper, inventoryClient, shippingClient);
+        orderService = new OrderService(
+                orderRepository,
+                modelMapper,
+                inventoryClient,
+                shippingCommunicationService
+        );
     }
 
     @Test
@@ -53,22 +57,22 @@ class OrderServiceShippingTest {
             order.setId(10L);
             return order;
         });
-        when(shippingClient.confirmShipping(10L))
+        when(shippingCommunicationService.confirmShipping(10L))
                 .thenReturn(new ShippingResponseDto(10L, "CONFIRMED"));
 
         OrderRequestDto result = orderService.createOrder(request);
 
         assertThat(result.getShippingStatus()).isEqualTo("CONFIRMED");
 
-        InOrder calls = inOrder(inventoryClient, orderRepository, shippingClient);
+        InOrder calls = inOrder(inventoryClient, orderRepository, shippingCommunicationService);
         calls.verify(inventoryClient).reduceStocks(request);
         calls.verify(orderRepository).save(any(Orders.class));
-        calls.verify(shippingClient).confirmShipping(10L);
+        calls.verify(shippingCommunicationService).confirmShipping(10L);
         calls.verify(orderRepository).save(any(Orders.class));
     }
 
     @Test
-    void keepsShippingPendingWhenShippingServiceIsUnavailable() {
+    void keepsShippingPendingWhenTheFallbackIsUsed() {
         OrderRequestDto request = orderRequest();
         when(inventoryClient.reduceStocks(request)).thenReturn(100.0);
         when(orderRepository.save(any(Orders.class))).thenAnswer(invocation -> {
@@ -76,7 +80,8 @@ class OrderServiceShippingTest {
             order.setId(10L);
             return order;
         });
-        when(shippingClient.confirmShipping(10L)).thenThrow(new RuntimeException("Unavailable"));
+        when(shippingCommunicationService.confirmShipping(10L))
+                .thenReturn(new ShippingResponseDto(10L, "PENDING"));
 
         OrderRequestDto result = orderService.createOrder(request);
 

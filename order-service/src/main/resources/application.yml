@@ -1,11 +1,11 @@
 management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
   health:
-    endpoints:
-      web:
-        exposure:
-          include: "*"
-  circuitbreakers:
-    enabled: true
+    circuitbreakers:
+      enabled: true
 
 resilience4j:
   retry:
@@ -13,6 +13,9 @@ resilience4j:
       inventoryRetry:
         max-attempts: 3
         wait-duration: 5s
+      shippingRetry:
+        max-attempts: 3
+        wait-duration: 500ms
   ratelimiter:
     instances:
       inventoryRateLimiter:
@@ -20,6 +23,9 @@ resilience4j:
         limitForPeriod: 1
         timeoutDuration: 1s
   circuitbreaker:
+    # Keep the circuit breaker outside the retry so fallback runs only after
+    # all retry attempts have failed.
+    circuit-breaker-aspect-order: 1
     instances:
       inventoryCircuitBreaker:
         registerHealthIndicator: true
@@ -29,4 +35,13 @@ resilience4j:
         failureRateThreshold: 50
         waitDurationInOpenState: 10s
         permittedNumberOfCallsInHalfOpenState: 3
+        eventConsumerBufferSize: 10
+      shippingCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        slidingWindowType: COUNT_BASED
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 1
         eventConsumerBufferSize: 10

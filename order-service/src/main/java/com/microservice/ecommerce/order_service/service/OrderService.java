@@ -1,7 +1,6 @@
 package com.microservice.ecommerce.order_service.service;
 
 import com.microservice.ecommerce.order_service.clients.InventoryOpenFeignClient;
-import com.microservice.ecommerce.order_service.clients.ShippingOpenFeignClient;
 import com.microservice.ecommerce.order_service.dto.OrderRequestDto;
 import com.microservice.ecommerce.order_service.dto.ShippingResponseDto;
 import com.microservice.ecommerce.order_service.entity.OrderItem;
@@ -9,8 +8,6 @@ import com.microservice.ecommerce.order_service.entity.OrderStatus;
 import com.microservice.ecommerce.order_service.entity.Orders;
 import com.microservice.ecommerce.order_service.repository.OrderRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -27,7 +24,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
     private final InventoryOpenFeignClient inventoryOpenFeignClient;
-    private final ShippingOpenFeignClient shippingOpenFeignClient;
+    private final ShippingCommunicationService shippingCommunicationService;
 
     public List<OrderRequestDto> getAllOrders(){
         log.info("Fetching all orders");
@@ -62,13 +59,9 @@ public class OrderService {
 
         orders = orderRepository.save(orders);
 
-        try {
-            ShippingResponseDto shipping = shippingOpenFeignClient.confirmShipping(orders.getId());
-            orders.setShippingStatus(shipping.status());
-            orders = orderRepository.save(orders);
-        } catch (Exception exception) {
-            log.warn("Shipping is still pending for order {}: {}", orders.getId(), exception.getMessage());
-        }
+        ShippingResponseDto shipping = shippingCommunicationService.confirmShipping(orders.getId());
+        orders.setShippingStatus(shipping.status());
+        orders = orderRepository.save(orders);
 
         return modelMapper.map(orders, OrderRequestDto.class);
     }
