@@ -6,6 +6,8 @@ spring:
      server:
        git:
          uri: https://github.com/h493/ecommerce-config-server
+         username: h493
+         password: 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
          default-label: main
 
 server:
