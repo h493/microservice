@@ -5,6 +5,7 @@ import com.microservice.ecommerce.order_service.dto.OrderRequestDto;
 import com.microservice.ecommerce.order_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,9 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+
+    @Value("${my.variable}")
+    private String myVariable;
 
     @GetMapping
     public ResponseEntity<List<OrderRequestDto>> getAllOrders(){
@@ -31,8 +35,8 @@ public class OrderController {
     }
 
     @GetMapping("/helloOrders")
-    public String helloOrders(@RequestHeader("X-User-ID") Long userId) {
-        return "Hello from Order Service , user id is : " + userId;
+    public String helloOrders() {
+        return "Hello from Order Service , my variable is : " + myVariable;
 
     }
 
